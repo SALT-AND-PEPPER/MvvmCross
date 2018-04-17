@@ -75,6 +75,20 @@ namespace MvvmCross.Platform.Test
             }
         }
 
+        public class D
+        {
+            public string Title { get; }
+            public string Subtitle { get; }
+            public string Description { get; }
+
+            public D(string title, string subtitle, string description)
+            {
+                Title = title;
+                Subtitle = subtitle;
+                Description = description;
+            }
+        }
+
         public class COdd : IC
         {
             public static bool FirstTime = true;
@@ -423,6 +437,75 @@ namespace MvvmCross.Platform.Test
             Assert.IsTrue(toResolve.GetType() == typeof(HasOGParameter));
             Assert.IsTrue(toResolve.OpenGeneric.GetType().GetTypeInfo().ImplementedInterfaces.Any(i => i == typeof(IOG<C>)));
             Assert.IsTrue(toResolve.OpenGeneric.GetType() == typeof(OG<C>));
+        }
+
+        #endregion
+
+        #region IocConstruct with options
+
+        [Test]
+        public static void IocConstruct_WithDictionaryArguments_CreatesObject()
+        {
+            MvxSingleton.ClearAllSingletons();
+            var instance = MvxSimpleIoCContainer.Initialize();
+
+            var c = new C2();
+            var arguments = new Dictionary<string, object>
+            {
+                ["c"] = c
+            };
+            instance.IoCConstruct<B>(arguments);
+        }
+
+        [Test]
+        public static void IocConstruct_WithAnonymousTypeArguments_CreatesObject()
+        {
+            MvxSingleton.ClearAllSingletons();
+            var instance = MvxSimpleIoCContainer.Initialize();
+
+            var c = new C2();
+            instance.IoCConstruct<B>(new { c });
+        }
+
+        [Test]
+        public static void IocConstruct_WithMultipleDictionaryArguments_CreatesObject()
+        {
+            MvxSingleton.ClearAllSingletons();
+            var instance = MvxSimpleIoCContainer.Initialize();
+
+            var title = "The title";
+            var subtitle = "The subtitle";
+            var description = "The description";
+
+            var arguments = new Dictionary<string, object>
+            {
+                ["title"] = title,
+                ["subtitle"] = subtitle,
+                ["description"] = description
+            };
+            var d = instance.IoCConstruct<D>(arguments);
+
+            Assert.AreEqual(title, d.Title);
+            Assert.AreEqual(subtitle, d.Subtitle);
+            Assert.AreEqual(description, d.Description);
+        }
+
+        [Test]
+        public static void IocConstruct_WithMultipleAnonymousArguments_CreatesObject()
+        {
+            MvxSingleton.ClearAllSingletons();
+            var instance = MvxSimpleIoCContainer.Initialize();
+
+            var title = "The title";
+            var subtitle = "The subtitle";
+            var description = "The description";
+
+            var arguments = new { title, subtitle, description };
+            var d = instance.IoCConstruct<D>(arguments);
+
+            Assert.AreEqual(title, d.Title);
+            Assert.AreEqual(subtitle, d.Subtitle);
+            Assert.AreEqual(description, d.Description);
         }
 
         #endregion

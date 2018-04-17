@@ -6,6 +6,7 @@
 // Project Lead - Stuart Lodge, @slodge, me@slodge.com
 
 using System;
+using System.Collections.Generic;
 
 namespace MvvmCross.Platform.IoC
 {
@@ -61,6 +62,16 @@ namespace MvvmCross.Platform.IoC
             where T : class;
 
         object IoCConstruct(Type type);
+
+        T IoCConstruct<T>(IDictionary<string, object> arguments)
+            where T : class;
+
+        T IoCConstruct<T>(object arguments)
+            where T : class;
+
+        object IoCConstruct(Type type, IDictionary<string, object> arguments);
+
+        object IoCConstruct(Type type, object arguments);
 
         void CallbackWhenRegistered<T>(Action action);
 
